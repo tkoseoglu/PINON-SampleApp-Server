@@ -1,13 +1,13 @@
 ﻿using System;
+using System.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
 using PINON.SampleApp.Common;
 
-namespace PINON.SampleApp.Auth.Tokens
+namespace PINON.SampleApp.Web.Tokens
 {
     public class JwtFactory : IJwtFactory
     {
@@ -15,13 +15,14 @@ namespace PINON.SampleApp.Auth.Tokens
 
         public JwtFactory()
         {
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Constants.JwtSecretKey));
+            var signingKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.ASCII.GetBytes(Constants.JwtSecretKey));
+
             _jwtOptions = new JwtIssuerOptions
             {
                 Issuer = Constants.JwtIssuer,
                 Audience = Constants.JwtAudience,
                 ValidFor = TimeSpan.FromMinutes(Constants.JwtExpirationInMinutes),
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(signingKey, Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
             };
 
             ThrowIfInvalidOptions(_jwtOptions);
@@ -41,14 +42,9 @@ namespace PINON.SampleApp.Auth.Tokens
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
                 identity.FindFirst("Role")
             };
-
-            var jwt = new JwtSecurityToken(
-                _jwtOptions.Issuer,
-                _jwtOptions.Audience,
-                claims,
-                _jwtOptions.NotBefore,
-                _jwtOptions.Expiration,
-                _jwtOptions.SigningCredentials);
+           
+            var jwt = new JwtSecurityToken(_jwtOptions.Issuer, _jwtOptions.Audience, claims, _jwtOptions.NotBefore,
+                _jwtOptions.Expiration, _jwtOptions.SigningCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace PINON.SampleApp.Auth.Tokens
+namespace PINON.SampleApp.Web.Tokens
 {
     public interface IJwtFactory
     {

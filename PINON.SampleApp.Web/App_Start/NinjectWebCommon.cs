@@ -1,4 +1,3 @@
-using PINON.SampleApp.Auth.Tokens;
 using PINON.SampleApp.Data.Contracts;
 using PINON.SampleApp.Data.Contracts.Repos;
 
@@ -70,7 +69,6 @@ namespace PINON.SampleApp.Web.App_Start
             kernel.Bind<IAppDbContext>().To<AppDbContext>();
             kernel.Bind<IPatientRepo>().To<PatientRepo>();
             kernel.Bind<IHospitalRepo>().To<HospitalRepo>();
-            kernel.Bind<IJwtFactory>().To<JwtFactory>();
         }        
     }
 }

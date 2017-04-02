@@ -1,37 +1,37 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Newtonsoft.Json;
-using PINON.SampleApp.Auth;
 using PINON.SampleApp.Auth.Models;
-using PINON.SampleApp.Auth.Tokens;
 using PINON.SampleApp.Common;
 using PINON.SampleApp.Data.Contracts.Repos;
 using PINON.SampleApp.Data.Models;
 using PINON.SampleApp.Web.Models;
+using PINON.SampleApp.Web.Tokens;
 
 namespace PINON.SampleApp.Web.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;      
-        private JsonSerializerSettings _serializerSettings;
         private readonly IPatientRepo _patientRepo;
+        private JsonSerializerSettings _serializerSettings;
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IPatientRepo patientRepo)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager,
+            IPatientRepo patientRepo)
         {
             UserManager = userManager;
-            SignInManager = signInManager;           
-            _patientRepo = patientRepo;           
+            SignInManager = signInManager;
+            _patientRepo = patientRepo;
         }
 
         public ApplicationSignInManager SignInManager
@@ -46,33 +46,8 @@ namespace PINON.SampleApp.Web.Controllers
             private set { _userManager = value; }
         }
 
-        private async Task<string> GenerateJwtToken(UserAccount user, bool isAdmin)
-        {
-            var jwtFactory = new JwtFactory();
-
-            this._serializerSettings = new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented
-            };
-
-            var jwtToken = await jwtFactory.GetJwtTokenAsync(user.Email, isAdmin);
-
-            var response = new
-            {
-                access_token = jwtToken,               
-                current_user = new
-                {
-                    user.FirstName,
-                    user.LastName,
-                    user.Email
-                }
-            };
-            var json = JsonConvert.SerializeObject(response, this._serializerSettings);
-            return json;
-        }
-
         [HttpPost]
-        [AllowAnonymous]        
+        [AllowAnonymous]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             var result = new TransactionResult();
@@ -83,18 +58,20 @@ namespace PINON.SampleApp.Web.Controllers
                 result.Message = "Missing login information";
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
-                           
-            var loginResult = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
-           
+
+            var loginResult = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
+                false);
+
             switch (loginResult)
             {
                 case SignInStatus.Success:
                     result.HasError = false;
+                    result.IsAuthenticated = true;
                     break;
-                    //var user = await this.UserManager.FindByEmailAsync(model.Email);
-                    //var isAdmin = await this.UserManager.IsInRoleAsync(user.Id, "Admin");
-                    //var jwtToken = await this.GenerateJwtToken(user, isAdmin);
-                    //return this.Json(jwtToken, JsonRequestBehavior.AllowGet);                    
+                    //var user = await UserManager.FindByEmailAsync(model.Email);
+                    //var isAdmin = await UserManager.IsInRoleAsync(user.Id, "Admin");
+                    //var jwtToken = await GenerateJwtToken(user, isAdmin);
+                    //return Json(jwtToken, JsonRequestBehavior.AllowGet);
                 case SignInStatus.LockedOut:
                     result.HasError = false;
                     break;
@@ -108,18 +85,18 @@ namespace PINON.SampleApp.Web.Controllers
                     break;
             }
 
-            return this.Json(result, JsonRequestBehavior.AllowGet);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]        
+        [HttpPost]
         public ActionResult LogOff()
         {
-            this.AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return this.Json(true, JsonRequestBehavior.AllowGet);
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return Json(true, JsonRequestBehavior.AllowGet);
         }
-               
+
         [HttpPost]
-        [AllowAnonymous]        
+        [AllowAnonymous]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             var result = new TransactionResult();
@@ -129,17 +106,17 @@ namespace PINON.SampleApp.Web.Controllers
                 result.Message = "Missing login information";
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
-          
+
             var user = new UserAccount
             {
                 UserName = model.Email,
-                Email = model.Email                
+                Email = model.Email
             };
             var registerUserResult = await UserManager.CreateAsync(user, model.Password);
-            if (!registerUserResult.Succeeded) return this.Json(result, JsonRequestBehavior.AllowGet);
+            if (!registerUserResult.Succeeded) return Json(result, JsonRequestBehavior.AllowGet);
             await SignInManager.SignInAsync(user, false, false);
 
-            var newUserAccount = await this.UserManager.FindByEmailAsync(model.Email);
+            var newUserAccount = await UserManager.FindByEmailAsync(model.Email);
             var patient = new Patient
             {
                 HospitalId = model.HospitalId,
@@ -147,10 +124,10 @@ namespace PINON.SampleApp.Web.Controllers
             };
             _patientRepo.Save(patient, newUserAccount.Id);
 
-            var jwtToken = await this.GenerateJwtToken(newUserAccount, false);
-            return this.Json(jwtToken, JsonRequestBehavior.AllowGet);
+            var jwtToken = await GenerateJwtToken(newUserAccount, false);
+            return Json(jwtToken, JsonRequestBehavior.AllowGet);
         }
-            
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -169,6 +146,31 @@ namespace PINON.SampleApp.Web.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        private async Task<string> GenerateJwtToken(UserAccount user, bool isAdmin)
+        {
+            var jwtFactory = new JwtFactory();
+
+            _serializerSettings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented
+            };
+
+            var jwtToken = await jwtFactory.GetJwtTokenAsync(user.Email, isAdmin);
+
+            var response = new
+            {
+                access_token = jwtToken,
+                current_user = new
+                {
+                    user.FirstName,
+                    user.LastName,
+                    user.Email
+                }
+            };
+            var json = JsonConvert.SerializeObject(response, _serializerSettings);
+            return json;
         }
 
         #region Helpers

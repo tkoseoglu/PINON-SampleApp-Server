@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
 
-namespace PINON.SampleApp.Auth.Tokens
+namespace PINON.SampleApp.Web.Tokens
 {
     public class JwtIssuerOptions
     {
@@ -32,6 +31,6 @@ namespace PINON.SampleApp.Auth.Tokens
             () => Task.FromResult(Guid.NewGuid().ToString());
 
       
-        public SigningCredentials SigningCredentials { get; set; }
+        public Microsoft.IdentityModel.Tokens.SigningCredentials SigningCredentials { get; set; }
     }
 }
