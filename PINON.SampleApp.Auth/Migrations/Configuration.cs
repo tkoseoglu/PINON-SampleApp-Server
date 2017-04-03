@@ -1,11 +1,11 @@
 using System.Data.Entity.Migrations;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using PINON.SampleApp.Auth.Models;
+using PINON.SampleApp.Identity.Models;
 
-namespace PINON.SampleApp.Auth.Migrations
+namespace PINON.SampleApp.Identity.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<AppAuthDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<AppIdentityDbContext>
     {
         public Configuration()
         {
@@ -13,7 +13,7 @@ namespace PINON.SampleApp.Auth.Migrations
             AutomaticMigrationDataLossAllowed = true;
         }
 
-        protected override void Seed(AppAuthDbContext context)
+        protected override void Seed(AppIdentityDbContext context)
         {
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             var userManager = new UserManager<UserAccount>(new UserStore<UserAccount>(context));

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace PINON.SampleApp.Auth.Models
+namespace PINON.SampleApp.Identity.Models
 {
     public class UserAccountRole : IdentityRole
     {

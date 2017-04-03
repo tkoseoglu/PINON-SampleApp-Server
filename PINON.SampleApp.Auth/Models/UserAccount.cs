@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace PINON.SampleApp.Auth.Models
+namespace PINON.SampleApp.Identity.Models
 {
     public class UserAccount : IdentityUser
     {
@@ -23,5 +23,13 @@ namespace PINON.SampleApp.Auth.Models
             // Add custom user claims here
             return userIdentity;
         }
+    }
+
+    public class UserAccountSimple
+    {       
+        public string FirstName { get; set; }       
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public int? HospitalId { get; set; }
     }
 }

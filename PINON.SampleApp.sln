@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Web", "PINON.SampleApp.Web\PINON.SampleApp.Web.csproj", "{E740CAC2-FD4E-4985-BC78-A80664A2AC47}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Data.Contracts", "PINON.SampleApp.Data.Contracts\PINON.SampleApp.Data.Contracts.csproj", "{0CDC9725-1924-4BF0-988C-CA428089A9E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Data", "PINON.SampleApp.Data\PINON.SampleApp.Data.csproj", "{EC115F4C-A95A-414D-854B-EB034236D474}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Auth", "PINON.SampleApp.Auth\PINON.SampleApp.Auth.csproj", "{6275B506-494D-437C-8EB4-11B6EBB1F8F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Identity", "PINON.SampleApp.Auth\PINON.SampleApp.Identity.csproj", "{6275B506-494D-437C-8EB4-11B6EBB1F8F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Common", "PINON.SampleApp.Common\PINON.SampleApp.Common.csproj", "{3A878D95-2929-4803-848B-2C67EDFF1CB3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.Data.Models", "PINON.SampleApp.Data.Models\PINON.SampleApp.Data.Models.csproj", "{11034D62-2EDA-4AA0-AB57-38891ADDF626}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PINON.SampleApp.WebApi", "PINON.SampleApp.WebApi\PINON.SampleApp.WebApi.csproj", "{049F328D-A1DB-4DCC-8BF3-EAD6AA52900E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{DF63AE77-7549-47FE-8AB3-A69173ECE630}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E740CAC2-FD4E-4985-BC78-A80664A2AC47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E740CAC2-FD4E-4985-BC78-A80664A2AC47}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E740CAC2-FD4E-4985-BC78-A80664A2AC47}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E740CAC2-FD4E-4985-BC78-A80664A2AC47}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0CDC9725-1924-4BF0-988C-CA428089A9E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0CDC9725-1924-4BF0-988C-CA428089A9E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CDC9725-1924-4BF0-988C-CA428089A9E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -45,8 +43,17 @@ Global
 		{11034D62-2EDA-4AA0-AB57-38891ADDF626}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11034D62-2EDA-4AA0-AB57-38891ADDF626}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11034D62-2EDA-4AA0-AB57-38891ADDF626}.Release|Any CPU.Build.0 = Release|Any CPU
+		{049F328D-A1DB-4DCC-8BF3-EAD6AA52900E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{049F328D-A1DB-4DCC-8BF3-EAD6AA52900E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{049F328D-A1DB-4DCC-8BF3-EAD6AA52900E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{049F328D-A1DB-4DCC-8BF3-EAD6AA52900E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0CDC9725-1924-4BF0-988C-CA428089A9E0} = {DF63AE77-7549-47FE-8AB3-A69173ECE630}
+		{EC115F4C-A95A-414D-854B-EB034236D474} = {DF63AE77-7549-47FE-8AB3-A69173ECE630}
+		{11034D62-2EDA-4AA0-AB57-38891ADDF626} = {DF63AE77-7549-47FE-8AB3-A69173ECE630}
 	EndGlobalSection
 EndGlobal
