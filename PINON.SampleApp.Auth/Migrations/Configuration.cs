@@ -36,38 +36,38 @@ namespace PINON.SampleApp.Identity.Migrations
                 };
                 roleManager.Create(patientUserAccountRole);
             }
-            
-            //var admin1 = userManager.FindByEmail("tolga.k@outlook.com");
-            //if (admin1 != null) return;
-            //admin1 = new UserAccount
-            //{
-            //    UserName = "tolga.k@outlook.com",
-            //    Email = "tolga.k@outlook.com",
-            //    LastName = "Koseoglu",
-            //    FirstName = "Tolga",
-            //    EmailConfirmed = true,
-            //    PhoneNumber = "949.243.6632",
-            //    PhoneNumberConfirmed = true
-            //};
 
-            //var userRole = new IdentityUserRole();
-            //var role = roleManager.FindByName("Admin");
-            //userRole.RoleId = role.Id;
-            //userRole.UserId = admin1.Id;
-            //admin1.Roles.Add(userRole);
+            var admin1 = userManager.FindByEmail("jharsh@pinon.com");
+            if (admin1 != null) return;
+            admin1 = new UserAccount
+            {
+                UserName = "jharsh@pinon.com",
+                Email = "jharsh@pinon.com",
+                LastName = "Harsh",
+                FirstName = "John",
+                EmailConfirmed = true,
+                PhoneNumber = "949.243.6632",
+                PhoneNumberConfirmed = true
+            };
 
-            //userManager.Create(admin1, "Ktk19766");
+            var userRole = new IdentityUserRole();
+            var role = roleManager.FindByName("Admin");
+            userRole.RoleId = role.Id;
+            userRole.UserId = admin1.Id;
+            admin1.Roles.Add(userRole);
+
+            userManager.Create(admin1, "123456");
 
             //patient
 
-            var patient1 = userManager.FindByEmail("patient1@pinon.com");
+            var patient1 = userManager.FindByEmail("mfassbender@pinon.com");
             if (patient1 != null) return;
             patient1 = new UserAccount
             {
-                UserName = "patient1@pinon.com",
-                Email = "patient1@pinon.com",
-                LastName = "One",
-                FirstName = "Patient",
+                UserName = "mfassbender@pinon.com",
+                Email = "mfassbender@pinon.com",
+                LastName = "Fassbender",
+                FirstName = "Michael",
                 EmailConfirmed = true,
                 PhoneNumber = "949.243.6632",
                 PhoneNumberConfirmed = true
@@ -78,7 +78,7 @@ namespace PINON.SampleApp.Identity.Migrations
             patient1Role.UserId = patient1.Id;
             patient1.Roles.Add(patient1Role);
 
-            userManager.Create(patient1, "Pat119766");
+            userManager.Create(patient1, "123456");
         }
     }
 }

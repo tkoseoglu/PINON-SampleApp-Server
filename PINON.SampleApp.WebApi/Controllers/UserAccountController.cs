@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using PINON.SampleApp.Common;
+using PINON.SampleApp.Data.Contracts.Repos;
+using PINON.SampleApp.Data.Models;
 using PINON.SampleApp.Identity.Contracts;
 using PINON.SampleApp.Tokens;
 using PINON.SampleApp.WebApi.Models;
@@ -11,10 +13,12 @@ namespace PINON.SampleApp.WebApi.Controllers
     public class UserAccountController : Controller
     {
         private readonly IIdentityManager _identityManager;
+        private readonly IPatientRepo _patientRepo;
 
-        public UserAccountController(IIdentityManager identityManager)
+        public UserAccountController(IIdentityManager identityManager, IPatientRepo patientRepo)
         {
             _identityManager = identityManager;
+            _patientRepo = patientRepo;
         }
 
         [HttpPost]
@@ -37,11 +41,15 @@ namespace PINON.SampleApp.WebApi.Controllers
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
 
+            //sign-in using asp.net identity
             var identityLoginResult = await _identityManager.PasswordSignInAsync(model.Email, model.Password);
             if (identityLoginResult.HasError) return Json(identityLoginResult, JsonRequestBehavior.AllowGet);
+
+            //get user identity
             var user = await _identityManager.FindByEmailAsync(model.Email);
             var userRole = await _identityManager.GetRolesAsync(user.Id);
-            var jwtToken = JwtManager.GenerateToken(model.Email, userRole.FirstOrDefault());
+            //generate jwt token
+            var jwtToken = JwtManager.GenerateToken(model.Email, userRole.FirstOrDefault(), user.Id);
            
             var response = new
             {
@@ -55,6 +63,56 @@ namespace PINON.SampleApp.WebApi.Controllers
                 }
             };
             return Json(response, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            var result = new TransactionResult();
+
+            if (!ModelState.IsValid)
+            {
+                result.HasError = true;
+                result.Message = "Missing registration information";
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+
+            //part 1: register using asp.net identity
+            var identityRegisterResult = await _identityManager.RegisterAsync(model, "Patient");
+            if (identityRegisterResult.HasError) return Json(identityRegisterResult, JsonRequestBehavior.AllowGet);
+            var user = await _identityManager.FindByEmailAsync(model.Email);
+
+            //part 2: create patient record
+            var patient = new Patient
+            {                
+                UserAccountId = user.Id,
+                HospitalId = model.HospitalId
+            };
+            var crudResult = _patientRepo.Save(patient, user.Email);            
+            return Json(crudResult, JsonRequestBehavior.AllowGet);
+        }
+
+        private async Task<TokenResponse> GetTokenResponse(string email)
+        {
+            //get user identity
+            var user = await _identityManager.FindByEmailAsync(email);
+            var userRole = await _identityManager.GetRolesAsync(user.Id);
+            
+            //generate jwt token
+            var jwtToken = JwtManager.GenerateToken(email, userRole.FirstOrDefault(), user.Id);
+
+            return new TokenResponse
+            {
+                access_token = jwtToken,
+                current_user = new CurrentUser
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Roles = userRole
+                }
+            };
         }
     }
 }

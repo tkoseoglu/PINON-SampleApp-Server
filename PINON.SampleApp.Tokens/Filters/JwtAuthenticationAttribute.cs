@@ -47,14 +47,16 @@ namespace PINON.SampleApp.Tokens.Filters
         {
             string username;
             string role;
+            string userId;
 
-            if (!ValidateToken(token, out username, out role)) return Task.FromResult<IPrincipal>(null);
+            if (!ValidateToken(token, out username, out role, out userId)) return Task.FromResult<IPrincipal>(null);
 
             // based on username to get more information from database in order to build local identity
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim(ClaimTypes.Sid, userId)
                 // Add more claims if needed: Roles, ...
             };
 
@@ -74,10 +76,11 @@ namespace PINON.SampleApp.Tokens.Filters
             context.ChallengeWith("Bearer", parameter);
         }
 
-        private static bool ValidateToken(string token, out string username, out string role)
+        private static bool ValidateToken(string token, out string userName, out string role, out string userId)
         {
-            username = null;
+            userName = null;
             role = null;
+            userId = null;
 
             var simplePrinciple = JwtManager.GetPrincipal(token);
             var identity = simplePrinciple.Identity as ClaimsIdentity;
@@ -88,12 +91,14 @@ namespace PINON.SampleApp.Tokens.Filters
             if (!identity.IsAuthenticated)
                 return false;
 
-            var usernameClaim = identity.FindFirst(ClaimTypes.Name);
+            var userNameClaim = identity.FindFirst(ClaimTypes.Name);
             var roleClaim = identity.FindFirst(ClaimTypes.Role);
-            username = usernameClaim?.Value;
+            var userIdClaim = identity.FindFirst(ClaimTypes.Sid);
+            userName = userNameClaim?.Value;
             role = roleClaim?.Value;
+            userId = userIdClaim?.Value;
 
-            return !string.IsNullOrEmpty(username);
+            return !string.IsNullOrEmpty(userName);
 
             // More validate to check whether username exists in system
         }

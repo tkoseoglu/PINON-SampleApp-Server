@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Web;
 using System.Web.Http;
+using PINON.SampleApp.Common;
 using PINON.SampleApp.Tokens.Filters;
-using PINON.SampleApp.WebApi.Models;
+using PINON.SampleApp.WebApi.Helpers;
 
 namespace PINON.SampleApp.WebApi.Controllers.api
 {
-    [JwtAuthentication]    
-    public class UtilController : ApiController
+    [JwtAuthentication]
+    public class UtilController : AppBaseController
     {
         [HttpGet]
         [Route("api/Util/GetMenu")]
@@ -22,12 +20,8 @@ namespace PINON.SampleApp.WebApi.Controllers.api
         private List<MenuItem> GetMenuAction()
         {
             var tabs = new List<MenuItem>();
-           
-            var identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
-            var claims = identity.Claims;
-            var isAdmin = claims.Any(p => p.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" && p.Value == "Admin");
 
-            if (isAdmin)
+            if (CurrentUserIsAdmin())
             {
                 tabs.Add(new MenuItem
                 {
@@ -44,11 +38,11 @@ namespace PINON.SampleApp.WebApi.Controllers.api
             {
                 tabs.Add(new MenuItem
                 {
-                    Name = "My Portal",
+                    Name = "Patient Portal",
                     Route = "/patient"
-                });               
+                });
             }
-            
+
             return tabs;
         }
     }

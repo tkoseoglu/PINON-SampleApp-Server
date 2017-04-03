@@ -15,7 +15,9 @@ namespace PINON.SampleApp.Identity.Models
         [StringLength(75)]
         [Required]
         public string LastName { get; set; }
-       
+                
+        public bool IsDeleted { get; set; }
+
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<UserAccount> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType

@@ -42,6 +42,12 @@ namespace PINON.SampleApp.Data.Repos
                 dbRecord.HairColor = record.HairColor;
                 dbRecord.Weight = record.Weight;
                 dbRecord.Height = record.Height;
+                dbRecord.CreatedBy = userName;
+                dbRecord.ModifiedBy = userName;
+                dbRecord.CreatedOn = DateTime.UtcNow;
+                dbRecord.ModifiedOn = DateTime.UtcNow;
+                dbRecord.IsDeleted = record.IsDeleted;
+
                 if (record.Id == 0)
                     this._db.Patients.Add(dbRecord);
 

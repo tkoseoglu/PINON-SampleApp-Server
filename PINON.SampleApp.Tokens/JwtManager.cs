@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
@@ -9,7 +10,7 @@ namespace PINON.SampleApp.Tokens
 {
     public static class JwtManager
     {       
-        public static string GenerateToken(string username, string role)
+        public static string GenerateToken(string userName, string role, string userId)
         {
             var symmetricKey = Convert.FromBase64String(Constants.JwtSecretKey);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -20,11 +21,9 @@ namespace PINON.SampleApp.Tokens
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role)
-                    //new Claim(JwtRegisteredClaimNames.Sub, username),
-                    //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    //new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64),identity.FindFirst("Role")
+                    new Claim(ClaimTypes.Name, userName),
+                    new Claim(ClaimTypes.Role, role),
+                    new Claim(ClaimTypes.Sid, userId)                    
                 }),
                 Expires = now.AddMinutes(Convert.ToInt32(Constants.JwtExpirationInMinutes)),
                 SigningCredentials =
@@ -64,13 +63,12 @@ namespace PINON.SampleApp.Tokens
                 return principal;
             }
 
-            catch (Exception)
+            catch (Exception ex)
             {
+                //Invalid token most likely. Or expired.
+                Debug.WriteLine(ex.Message);
                 return null;
             }
-        }
-
-        private static long ToUnixEpochDate(DateTime date)
-        => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
+        }       
     }
 }
