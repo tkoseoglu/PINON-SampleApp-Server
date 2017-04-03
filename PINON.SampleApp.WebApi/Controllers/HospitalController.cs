@@ -1,5 +1,5 @@
 ﻿using System.Web.Http;
-using PINON.SampleApp.WebApi.Filters;
+using PINON.SampleApp.Tokens.Filters;
 
 namespace PINON.SampleApp.WebApi.Controllers
 {

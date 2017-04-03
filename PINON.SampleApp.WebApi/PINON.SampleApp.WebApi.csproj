@@ -224,14 +224,9 @@
     <Compile Include="Controllers\UserAccountController.cs" />
     <Compile Include="Controllers\HospitalController.cs" />
     <Compile Include="Controllers\PatientController.cs" />
-    <Compile Include="Filters\AddChallengeOnUnauthorizedResult.cs" />
-    <Compile Include="Filters\AuthenticationFailureResult.cs" />
-    <Compile Include="Filters\HttpAuthenticationChallengeContextExtensions.cs" />
-    <Compile Include="Filters\JwtAuthenticationAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\JwtManager.cs" />
     <Compile Include="Helpers\WebApiDependencyResolver.cs" />
     <Compile Include="Models\AppViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -328,6 +323,10 @@
     <ProjectReference Include="..\PINON.SampleApp.Data\PINON.SampleApp.Data.csproj">
       <Project>{ec115f4c-a95a-414d-854b-eb034236d474}</Project>
       <Name>PINON.SampleApp.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PINON.SampleApp.Tokens\PINON.SampleApp.Tokens.csproj">
+      <Project>{E951ECF2-5E8A-4206-A46F-BE8B27135CB8}</Project>
+      <Name>PINON.SampleApp.Tokens</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

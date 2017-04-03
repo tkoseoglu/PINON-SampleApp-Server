@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using PINON.SampleApp.Common;
 using PINON.SampleApp.Identity.Contracts;
+using PINON.SampleApp.Tokens;
 using PINON.SampleApp.WebApi.Helpers;
 using PINON.SampleApp.WebApi.Models;
 
