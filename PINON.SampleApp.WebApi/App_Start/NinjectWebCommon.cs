@@ -74,11 +74,7 @@ namespace PINON.SampleApp.WebApi.App_Start
             kernel.Bind<IAppDbContext>().To<AppDbContext>();
             kernel.Bind<IPatientRepo>().To<PatientRepo>();
             kernel.Bind<IHospitalRepo>().To<HospitalRepo>();
-            kernel.Bind<IIdentityManager>().To<IdentityManager>();
-
-            //kernel.Bind<IUserStore<UserAccount>>().To<UserStore<UserAccount>>();
-            //kernel.Bind<UserManager<UserAccount>>().ToSelf();
-            //kernel.Bind<IAuthenticationManager>().ToMethod(c => HttpContext.Current.GetOwinContext().Authentication).InRequestScope();
+            kernel.Bind<IIdentityManager>().To<IdentityManager>();           
         }
     }
 }

@@ -1,26 +1,30 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Principal;
 using Microsoft.IdentityModel.Tokens;
 using PINON.SampleApp.Common;
 
 namespace PINON.SampleApp.Tokens
 {
     public static class JwtManager
-    {
-        public const string Secret = "856FECBA3B06519C8DDDBC80BB080554"; 
-
-        public static string GenerateToken(string username, bool isAdmin)
+    {       
+        public static string GenerateToken(string username, string role)
         {
-            var symmetricKey = Convert.FromBase64String(Secret);
+            var symmetricKey = Convert.FromBase64String(Constants.JwtSecretKey);
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var now = DateTime.UtcNow;
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.Name, username)
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.Role, role)
+                    //new Claim(JwtRegisteredClaimNames.Sub, username),
+                    //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    //new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64),identity.FindFirst("Role")
                 }),
                 Expires = now.AddMinutes(Convert.ToInt32(Constants.JwtExpirationInMinutes)),
                 SigningCredentials =
@@ -44,7 +48,7 @@ namespace PINON.SampleApp.Tokens
                 if (jwtToken == null)
                     return null;
 
-                var symmetricKey = Convert.FromBase64String(Secret);
+                var symmetricKey = Convert.FromBase64String(Constants.JwtSecretKey);
 
                 var validationParameters = new TokenValidationParameters
                 {
@@ -65,5 +69,8 @@ namespace PINON.SampleApp.Tokens
                 return null;
             }
         }
+
+        private static long ToUnixEpochDate(DateTime date)
+        => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
     }
 }

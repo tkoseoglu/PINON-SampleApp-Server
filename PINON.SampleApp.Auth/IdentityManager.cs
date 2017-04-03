@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -68,6 +69,11 @@ namespace PINON.SampleApp.Identity
         public async Task<UserAccount> FindByEmailAsync(string email)
         {
             return await this.UserManager.FindByEmailAsync(email);
+        }
+
+        public async Task<IList<string>> GetRolesAsync(string userId)
+        {
+            return await this.UserManager.GetRolesAsync(userId);
         }
         
     }

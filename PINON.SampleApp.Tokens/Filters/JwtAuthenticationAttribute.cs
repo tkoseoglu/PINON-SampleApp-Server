@@ -33,7 +33,6 @@ namespace PINON.SampleApp.Tokens.Filters
 
             if (principal == null)
                 context.ErrorResult = new AuthenticationFailureResult("Invalid token", request);
-
             else
                 context.Principal = principal;
         }
@@ -47,13 +46,15 @@ namespace PINON.SampleApp.Tokens.Filters
         protected Task<IPrincipal> AuthenticateJwtToken(string token)
         {
             string username;
+            string role;
 
-            if (!ValidateToken(token, out username)) return Task.FromResult<IPrincipal>(null);
+            if (!ValidateToken(token, out username, out role)) return Task.FromResult<IPrincipal>(null);
 
             // based on username to get more information from database in order to build local identity
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role)
                 // Add more claims if needed: Roles, ...
             };
 
@@ -73,9 +74,10 @@ namespace PINON.SampleApp.Tokens.Filters
             context.ChallengeWith("Bearer", parameter);
         }
 
-        private static bool ValidateToken(string token, out string username)
+        private static bool ValidateToken(string token, out string username, out string role)
         {
             username = null;
+            role = null;
 
             var simplePrinciple = JwtManager.GetPrincipal(token);
             var identity = simplePrinciple.Identity as ClaimsIdentity;
@@ -87,7 +89,9 @@ namespace PINON.SampleApp.Tokens.Filters
                 return false;
 
             var usernameClaim = identity.FindFirst(ClaimTypes.Name);
+            var roleClaim = identity.FindFirst(ClaimTypes.Role);
             username = usernameClaim?.Value;
+            role = roleClaim?.Value;
 
             return !string.IsNullOrEmpty(username);
 
