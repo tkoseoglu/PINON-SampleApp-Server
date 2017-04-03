@@ -36,7 +36,12 @@ namespace PINON.SampleApp.Data.Repos
             try
             {
                 var dbRecord = this._db.Hospitals.Find(record.Id) ?? new Hospital();
-                dbRecord.HospitalName = record.HospitalName;              
+                dbRecord.HospitalName = record.HospitalName;
+                dbRecord.CreatedBy = userName;
+                dbRecord.ModifiedBy = userName;
+                dbRecord.CreatedOn = DateTime.UtcNow;
+                dbRecord.ModifiedOn = DateTime.UtcNow;
+                dbRecord.IsDeleted = record.IsDeleted;
                 if (record.Id == 0)
                     this._db.Hospitals.Add(dbRecord);
 
