@@ -7,6 +7,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using PINON.SampleApp.Identity.Models;
+using TOLGA.Common;
+using TOLGA.Common.Contracts;
 
 namespace PINON.SampleApp.Identity
 {
@@ -42,7 +44,30 @@ namespace PINON.SampleApp.Identity
             manager.UserLockoutEnabledByDefault = true;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);
             manager.MaxFailedAccessAttemptsBeforeLockout = 5;
-          
+
+            // Register two factor authentication providers. This application uses Phone and Emails as a step of receiving a code for verifying the user
+            // You can write your own provider and plug it in here.
+            manager.RegisterTwoFactorProvider("Phone Code", new PhoneNumberTokenProvider<UserAccount>
+            {
+                MessageFormat = "Your security code is {0}"
+            });
+            manager.RegisterTwoFactorProvider("Email Code", new EmailTokenProvider<UserAccount>
+            {
+                Subject = "Security Code",
+                BodyFormat = "Your security code is {0}"
+            });
+                    
+            var tolgaUtilities = new TolgaUtilities();
+            var tolgaLogging = new TolgaLogging(tolgaUtilities);
+
+            manager.EmailService = new EmailService(tolgaLogging, tolgaUtilities);
+            manager.SmsService = new SmsService();
+
+            //var dataProtectionProvider = options.DataProtectionProvider;
+            //if (dataProtectionProvider != null)
+            //    manager.UserTokenProvider =
+            //        new DataProtectorTokenProvider<UserAccount>(dataProtectionProvider.Create("ASP.NET Identity"));
+
             return manager;
         }
     }

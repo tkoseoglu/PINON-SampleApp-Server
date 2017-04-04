@@ -323,6 +323,10 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\TOLGA-Common\TOLGA.Common\TOLGA.Common.csproj">
+      <Project>{e3859f56-0890-43d3-9d51-7ce8d6c6902d}</Project>
+      <Name>TOLGA.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PINON.SampleApp.Auth\PINON.SampleApp.Identity.csproj">
       <Project>{6275b506-494d-437c-8eb4-11b6ebb1f8f9}</Project>
       <Name>PINON.SampleApp.Identity</Name>

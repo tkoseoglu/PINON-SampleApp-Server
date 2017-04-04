@@ -117,8 +117,10 @@
   <ItemGroup>
     <Compile Include="AppIdentityDbContext.cs" />
     <Compile Include="Contracts\IIdentityManager.cs" />
+    <Compile Include="EmailExt.cs" />
     <Compile Include="IdentityConfig.cs" />
     <Compile Include="IdentityManager.cs" />
+    <Compile Include="MessageServices.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\UserAccount.cs" />
@@ -130,6 +132,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\TOLGA-Common\TOLGA.Common\TOLGA.Common.csproj">
+      <Project>{e3859f56-0890-43d3-9d51-7ce8d6c6902d}</Project>
+      <Name>TOLGA.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PINON.SampleApp.Common\PINON.SampleApp.Common.csproj">
       <Project>{3a878d95-2929-4803-848b-2c67edff1cb3}</Project>
       <Name>PINON.SampleApp.Common</Name>

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using PINON.SampleApp.Common;
@@ -91,6 +92,37 @@ namespace PINON.SampleApp.WebApi.Controllers
             };
             var crudResult = _patientRepo.Save(patient, user.Email);            
             return Json(crudResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public async Task<string> ConfirmRegistrationFromEmail(string userId, string token)
+        {
+            token = token.Replace(" ", "+");         
+            try
+            {
+                if ((userId == null) || (token == null))
+                {                   
+                    return $"An error occurred";
+                }
+                var confirmEmailResult = await _identityManager.ConfirmEmailAsync(userId, token);
+                if (!confirmEmailResult.Succeeded) return string.Join(", ", confirmEmailResult.Errors);
+
+                var siteUser = _identityManager.GetUserAccounts().FirstOrDefault(p => p.Id == userId);
+                if (siteUser == null)
+                    return "User not found";
+
+                var applicationBaseUrl = Constants.ApplicationUrl;
+
+                var html = $"<div>Hello, {siteUser.FirstName}</div>";
+                html += "<div>You have successfully completed your account registration for Pinon Sample App.</div>";
+                html += $"<div><a href='{applicationBaseUrl}/#login'>Click here</a> to login.</div><br>";
+                html += "<div>-Pinon Sample App Team</div>";
+                return html;
+            }
+            catch (Exception ex)
+            {                
+                return $"An error occurred {ex.Message}";
+            }
         }
 
         private async Task<TokenResponse> GetTokenResponse(string email)

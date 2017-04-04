@@ -20,6 +20,8 @@ namespace PINON.SampleApp.WebApi.App_Start
     using PINON.SampleApp.Identity.Models;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Microsoft.Owin.Security;
+    using TOLGA.Common.Contracts;
+    using TOLGA.Common;
 
     public static class NinjectWebCommon
     {
@@ -75,6 +77,9 @@ namespace PINON.SampleApp.WebApi.App_Start
             kernel.Bind<IPatientRepo>().To<PatientRepo>();
             kernel.Bind<IHospitalRepo>().To<HospitalRepo>();
             kernel.Bind<IIdentityManager>().To<IdentityManager>();
+
+            kernel.Bind<ITolgaLogging>().To<TolgaLogging>();
+            kernel.Bind<ITolgaUtilities>().To<TolgaUtilities>();
         }
     }
 }

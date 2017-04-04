@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using PINON.SampleApp.Data.Contracts.Repos;
 using PINON.SampleApp.Data.Models;
+using PINON.SampleApp.Identity.Contracts;
 using PINON.SampleApp.Tokens.Filters;
 using PINON.SampleApp.WebApi.Helpers;
 using PINON.SampleApp.WebApi.Models;
@@ -13,10 +14,12 @@ namespace PINON.SampleApp.WebApi.Controllers.api
     public class HospitalController : AppBaseController
     {
         private readonly IHospitalRepo _hospitalRepo;
+        private readonly IIdentityManager _identityManager;
 
-        public HospitalController(IHospitalRepo hospitalRepo)
+        public HospitalController(IHospitalRepo hospitalRepo, IIdentityManager identityManager)
         {
             _hospitalRepo = hospitalRepo;
+            _identityManager = identityManager;
         }
 
         [AllowAnonymous]
@@ -65,15 +68,24 @@ namespace PINON.SampleApp.WebApi.Controllers.api
         [Route("api/Hospital/GetHospitalDetails/{id}")]
         public IHttpActionResult GetHospitalDetails(int id)
         {
+            var userAccounts = _identityManager.GetUserAccounts();
+
             var hospital = _hospitalRepo.GetAll().Where(p => p.Id == id).ToList().Select(p => new
             {
                 p.Id,
                 p.HospitalName,
-            }).FirstOrDefault();
-            if (hospital == null)
-            {
-                return this.Ok(BadRequest());
-            }
+                Patients = from hp in p.Patients
+                           join ua in userAccounts on hp.UserAccountId equals ua.Id
+                           select new
+                           {
+                               ua.FirstName,
+                               ua.LastName,
+                               hp.EyeColor,
+                               hp.HairColor,
+                               hp.Weight,
+                               hp.Height
+                           }
+            }).FirstOrDefault();                        
             return this.Ok(hospital);
         }
 

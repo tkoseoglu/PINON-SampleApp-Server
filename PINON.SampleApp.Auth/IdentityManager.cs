@@ -97,6 +97,19 @@ namespace PINON.SampleApp.Identity
             if (registerResult.Succeeded)
             {
                 this.UserManager.AddToRole(user.Id, role);
+
+                //var token = await this.UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                //var applicationBaseUrl = Common.Constants.ApplicationUrl;
+
+                //var url = $"{applicationBaseUrl}/userAccount/ConfirmRegistrationFromEmail?userId={user.Id}&token={token}";
+                //var body = $"<div>Hello, {registerModel.FirstName}</div>";
+                //body += "<div>Thanks for creating an account with Pinon Sample App.</div><br>";
+                //body += "<div><a href='" + url + "' target='_blank'>Click here</a> to confirm and finalize your registration process.</div><br>";
+                //body += "<div>-Pinon Team</div>";
+
+                //var subject = "Pinon Sample App | Confirm Registration";
+                //await this.UserManager.SendEmailAsync(user.Id, subject, body);
+
                 return result;
             }                
             result.HasError = true;
@@ -110,6 +123,15 @@ namespace PINON.SampleApp.Identity
             user.IsDeleted = true;
             return await this.UserManager.UpdateAsync(user);
         }
-       
+
+        public async Task<IdentityResult> ConfirmEmailAsync(string userId, string token)
+        {
+            return await this.UserManager.ConfirmEmailAsync(userId, token);            
+        }
+
+        public IQueryable<UserAccount> GetUserAccounts()
+        {
+            return this.UserManager.Users;
+        }
     }
 }
