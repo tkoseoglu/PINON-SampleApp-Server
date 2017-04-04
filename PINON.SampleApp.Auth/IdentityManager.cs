@@ -81,7 +81,7 @@ namespace PINON.SampleApp.Identity
             return await this.UserManager.GetRolesAsync(userId);
         }
 
-        public async Task<TransactionResult> RegisterAsync(RegisterViewModel registerModel, string role)
+        public async Task<TransactionResult> RegisterAsync(RegisterViewModel registerModel, string role, string hospitalName)
         {
             var result = new TransactionResult();
             var user = new UserAccount
@@ -103,11 +103,11 @@ namespace PINON.SampleApp.Identity
 
                 var url = $"{applicationBaseUrl}/userAccount/ConfirmRegistrationFromEmail?userId={user.Id}&token={token}";
                 var body = $"<div>Hello, {registerModel.FirstName}</div>";
-                body += "<div>Thanks for creating an account with Pinon Sample App.</div><br>";
+                body += $"<div>Thanks for creating an account with {hospitalName}.</div><br>";
                 body += "<div><a href='" + url + "' target='_blank'>Click here</a> to confirm and finalize your registration process.</div><br>";
                 body += "<div>-Pinon Team</div>";
 
-                var subject = "Pinon Sample App | Confirm Registration";
+                var subject = $"{hospitalName} | Confirm Registration";
                 await this.UserManager.SendEmailAsync(user.Id, subject, body);
 
                 return result;

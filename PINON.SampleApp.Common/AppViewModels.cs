@@ -14,6 +14,8 @@ namespace PINON.SampleApp.Common
         [DataType(DataType.Password)]        
         public string Password { get; set; }
         
+        public int? HospitalId { get; set; }
+
         public bool RememberMe { get; set; }
     }
 

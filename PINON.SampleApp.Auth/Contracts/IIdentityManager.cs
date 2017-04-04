@@ -15,7 +15,7 @@ namespace PINON.SampleApp.Identity.Contracts
         IQueryable<UserAccount> GetUserAccounts();
         UserAccount FindByEmail(string email);
         Task<IList<string>> GetRolesAsync(string userId);
-        Task<TransactionResult> RegisterAsync(RegisterViewModel registerModel, string role);
+        Task<TransactionResult> RegisterAsync(RegisterViewModel registerModel, string role, string hospitalName);
         Task<IdentityResult> DeleteAsync(string userId);
         Task<IdentityResult> ConfirmEmailAsync(string userId, string token);
     }
