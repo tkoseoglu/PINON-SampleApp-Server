@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PINON.SampleApp.Data.Models;
 
 namespace PINON.SampleApp.WebApi.Models
 {
@@ -35,9 +36,14 @@ namespace PINON.SampleApp.WebApi.Models
 
     public class PatientSearchViewModel
     {
+        //db id
         public int Id { get; set; }
+        //identity id
+        public string UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Email { get; set; }
+        public Hospital Hospital { get; set; }
         public string EyeColor { get; set; }
         public string HairColor { get; set; }
         public string Height { get; set; }

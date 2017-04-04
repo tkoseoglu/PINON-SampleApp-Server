@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using PINON.SampleApp.Common;
-using PINON.SampleApp.Identity.Contracts;
 using PINON.SampleApp.Identity.Models;
 
 namespace PINON.SampleApp.Identity
@@ -11,11 +10,8 @@ namespace PINON.SampleApp.Identity
         public AppIdentityDbContext()
             : base("DefaultConnection", false)
         {
-#if(RELEASE)
-            Database.Connection.ConnectionString = @"Data Source=(local)\sqlexpress;Initial Catalog=TOLGA_Inx2;User ID=webapps;Password=elevated";
-#elif(DEBUG)
-            Database.Connection.ConnectionString = Constants.Debug_Db_ConnetionString;
-#endif
+
+            Database.Connection.ConnectionString = Constants.Db_ConnetionString;
         }
 
         public DbSet<UserAccountRole> UserAccountRoles { get; set; }

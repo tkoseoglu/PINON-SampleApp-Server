@@ -29,7 +29,7 @@ namespace PINON.SampleApp.WebApi.Controllers.api
         {
             if (!this.CurrentUserIsAdmin())
             {
-                return this.BadRequest("Admin privileges required");
+                return this.Unauthorized();
             }
 
             var patientQuery = _patientRepo.GetAll().OrderBy(p => p.Id).Where(p => !p.IsDeleted);
@@ -53,8 +53,12 @@ namespace PINON.SampleApp.WebApi.Controllers.api
                            join ua in userAccounts.ToList() on p.UserAccountId equals ua.Id
                            select new PatientSearchViewModel
                            {
+                               Id = p.Id,
+                               UserId = ua.Id,
                                FirstName = ua.FirstName,
                                LastName = ua.LastName,
+                               Email = ua.Email,
+                               Hospital = p.Hospital,
                                EyeColor = p.EyeColor,
                                HairColor = p.HairColor,
                                Weight = p.Weight,
@@ -152,8 +156,33 @@ namespace PINON.SampleApp.WebApi.Controllers.api
             //part 1 update user account
             await _identityManager.DeleteAsync(user.Id);
 
-            //part 1 update patient record
-            patient.IsDeleted = true;
+            //part 2 update patient record
+            patientToDelete.IsDeleted = true;
+            var result = _patientRepo.Save(patientToDelete, this.CurrentUserName());
+
+            return this.Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/Patient/DeletePatient/{id}")]
+        public async Task<IHttpActionResult> DeletePatient(string id)
+        {
+            if (!this.CurrentUserIsAdmin())
+            {
+                return this.Unauthorized();
+            }
+
+            var patientToDelete = _patientRepo.GetAll().FirstOrDefault(p => p.UserAccountId == id);
+            if (patientToDelete == null)
+            {
+                return this.BadRequest("Patient not found");
+            }
+           
+            //part 1 update user account
+            await _identityManager.DeleteAsync(id);
+
+            //part 2 update patient record
+            patientToDelete.IsDeleted = true;
             var result = _patientRepo.Save(patientToDelete, this.CurrentUserName());
 
             return this.Ok(result);

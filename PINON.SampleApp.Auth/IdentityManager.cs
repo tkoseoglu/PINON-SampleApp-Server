@@ -90,25 +90,25 @@ namespace PINON.SampleApp.Identity
                 LastName = registerModel.LastName,
                 Email = registerModel.Email,
                 UserName = registerModel.Email,
-                EmailConfirmed = true, //should be false in PROD. For the purpose of this app we are not going to use email confirmations
-                PhoneNumberConfirmed = true
+                EmailConfirmed = false,
+                PhoneNumberConfirmed = false
             };
             var registerResult = await UserManager.CreateAsync(user, registerModel.Password);
             if (registerResult.Succeeded)
             {
                 this.UserManager.AddToRole(user.Id, role);
 
-                //var token = await this.UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                //var applicationBaseUrl = Common.Constants.ApplicationUrl;
+                var token = await this.UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                var applicationBaseUrl = Common.Constants.WebApiBaseUrl;
 
-                //var url = $"{applicationBaseUrl}/userAccount/ConfirmRegistrationFromEmail?userId={user.Id}&token={token}";
-                //var body = $"<div>Hello, {registerModel.FirstName}</div>";
-                //body += "<div>Thanks for creating an account with Pinon Sample App.</div><br>";
-                //body += "<div><a href='" + url + "' target='_blank'>Click here</a> to confirm and finalize your registration process.</div><br>";
-                //body += "<div>-Pinon Team</div>";
+                var url = $"{applicationBaseUrl}/userAccount/ConfirmRegistrationFromEmail?userId={user.Id}&token={token}";
+                var body = $"<div>Hello, {registerModel.FirstName}</div>";
+                body += "<div>Thanks for creating an account with Pinon Sample App.</div><br>";
+                body += "<div><a href='" + url + "' target='_blank'>Click here</a> to confirm and finalize your registration process.</div><br>";
+                body += "<div>-Pinon Team</div>";
 
-                //var subject = "Pinon Sample App | Confirm Registration";
-                //await this.UserManager.SendEmailAsync(user.Id, subject, body);
+                var subject = "Pinon Sample App | Confirm Registration";
+                await this.UserManager.SendEmailAsync(user.Id, subject, body);
 
                 return result;
             }                

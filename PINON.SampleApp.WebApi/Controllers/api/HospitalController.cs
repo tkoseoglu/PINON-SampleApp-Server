@@ -39,6 +39,11 @@ namespace PINON.SampleApp.WebApi.Controllers.api
         [Route("api/Hospital/Search")]
         public IHttpActionResult Search(HospitalSearch searchQuery)
         {
+            if (!this.CurrentUserIsAdmin())
+            {
+                return this.Unauthorized();
+            }
+
             var hospitalQuery = _hospitalRepo.GetAll().Where(p => !p.IsDeleted);
 
             if (!string.IsNullOrEmpty(searchQuery.HospitalName))
@@ -93,7 +98,32 @@ namespace PINON.SampleApp.WebApi.Controllers.api
         [Route("api/Hospital/SaveHospital")]
         public IHttpActionResult SaveHospital(Hospital hospital)
         {
+            if (!this.CurrentUserIsAdmin())
+            {
+                return this.Unauthorized();
+            }
             var result = _hospitalRepo.Save(hospital, this.CurrentUserName());
+            return this.Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/Hospital/DeleteHospital/{id}")]
+        public IHttpActionResult DeleteHospital(int id)
+        {
+            if (!this.CurrentUserIsAdmin())
+            {
+                return this.Unauthorized();
+            }
+
+            var hospitalToDelete = _hospitalRepo.GetAll().FirstOrDefault(p => p.Id == id);
+            if (hospitalToDelete == null)
+            {
+                return this.BadRequest("Hospital not found");
+            }
+
+            hospitalToDelete.IsDeleted = true;
+            var result = _hospitalRepo.Save(hospitalToDelete, this.CurrentUserName());
+
             return this.Ok(result);
         }
 

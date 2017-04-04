@@ -42,12 +42,20 @@ namespace PINON.SampleApp.WebApi.Controllers
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
 
+            var user = await _identityManager.FindByEmailAsync(model.Email);
+            if (user.IsDeleted)
+            {
+                result.HasError = true;
+                result.Message = "User not active";
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+
             //sign-in using asp.net identity
             var identityLoginResult = await _identityManager.PasswordSignInAsync(model.Email, model.Password);
             if (identityLoginResult.HasError) return Json(identityLoginResult, JsonRequestBehavior.AllowGet);
 
             //get user identity
-            var user = await _identityManager.FindByEmailAsync(model.Email);
+           
             var userRole = await _identityManager.GetRolesAsync(user.Id);
             //generate jwt token
             var jwtToken = JwtManager.GenerateToken(model.Email, userRole.FirstOrDefault(), user.Id);
@@ -111,7 +119,7 @@ namespace PINON.SampleApp.WebApi.Controllers
                 if (siteUser == null)
                     return "User not found";
 
-                var applicationBaseUrl = Constants.ApplicationUrl;
+                var applicationBaseUrl = Constants.WebApplicationBaseUrl;
 
                 var html = $"<div>Hello, {siteUser.FirstName}</div>";
                 html += "<div>You have successfully completed your account registration for Pinon Sample App.</div>";

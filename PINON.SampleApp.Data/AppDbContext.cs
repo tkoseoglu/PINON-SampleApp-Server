@@ -9,11 +9,7 @@ namespace PINON.SampleApp.Data
     {
         public AppDbContext()
         {
-#if(RELEASE)
-            Database.Connection.ConnectionString = @"Data Source=(local)\sqlexpress;Initial Catalog=TOLGA_Inx2;User ID=webapps;Password=elevated";
-#elif(DEBUG)
-            Database.Connection.ConnectionString = Constants.Debug_Db_ConnetionString;
-#endif
+            Database.Connection.ConnectionString = Constants.Db_ConnetionString;
         }
 
         public DbSet<Hospital> Hospitals { get; set; }
